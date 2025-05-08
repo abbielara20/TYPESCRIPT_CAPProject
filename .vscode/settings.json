@@ -1,0 +1,11 @@
+{
+  "SAP HANA Database Explorer.UseObjectsDefinitionForSqlGeneration.RetentionTime": 7,
+  "eslint.validate": [
+    "cds",
+    "csn",
+    "csv",
+    "csv (semicolon)",
+    "tsv",
+    "tab"
+  ]
+}

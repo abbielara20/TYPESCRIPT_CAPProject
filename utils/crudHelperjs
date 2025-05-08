@@ -1,0 +1,105 @@
+module.exports = (cds) => {
+  return {
+    /**
+     * Insert records in bulk
+     * @param {object} entity - table name
+     * @param {array} entries - record of columns and values
+     * @returns result of the query / error encountered
+     */
+    create: async (entity, entries) => {
+      try {
+        const query = INSERT.into(entity).entries(entries);
+        return await cds.run(query);
+      } catch (error) {
+        console.error("Error encountered in inserting data:", error);
+        throw error;
+      }
+    },
+
+    /**
+     * Insert records in bulk if values of the key field/s does not exists.
+     * Otherwise, update records in bulk.
+     * @param {object} entity - table name
+     * @param {array} entries - record of columns and values
+     * @returns result of the query / error encountered
+     */
+    upsert: async (entity, entries) => {
+      try {
+        const query = UPSERT.into(entity).entries(entries);
+        return await cds.run(query);
+      } catch (error) {
+        console.error(
+          "Error encountered in updating or inserting data:",
+          error
+        );
+        throw error;
+      }
+    },
+
+    /**
+     * Read records with or without conditions
+     * @param {object} entity - table name
+     * @param {array} columns - columns to be retrieved
+     * @param {array} where - condition in which record to be retrieved
+     * @param {array} having - condition in which record to be retrieved
+     * @param {array} groupBy - groups the records
+     * @param {array} orderBy - order the records in asc or desc order
+     * @returns result of the query / error encountered
+     */
+    read: async (
+      entity,
+      columns = [],
+      where = [],
+      having = [],
+      groupBy = [],
+      orderBy = []
+    ) => {
+      try {
+        let query = SELECT
+          .from(entity)
+          .columns(...columns)
+          .where(where)
+          .having(having)
+          .groupBy(...groupBy)
+          .orderBy(orderBy)
+        return await cds.run(query);
+      } catch (error) {
+        console.error("Error encountered in reading data:", error);
+        throw error;
+      }
+    },
+
+    /**
+     * Update a single entry record that matches the key field/s
+     * @param {object} entity - table name
+     * @param {object} where - condition in which record to be updated
+     * @param {array} entries - record of columns and values
+     * @returns result of the query / error encountered
+     */
+    update: async (entity, where = [], entries) => {
+      try {
+        const query = UPDATE.entity(entity).where(where).data(...entries);
+        return await cds.run(query);
+      } catch (error) {
+        console.error("Error encountered in updating data:", error);
+        throw error;
+      }
+    },
+
+    /**
+     * Delete records based on the condition
+     * @param {object} entity - table name
+     * @param {array} where - condition in which record to be deleted
+     * @returns result of the query / error encountered
+     */
+    delete: async (entity, where) => {
+      try {
+        const query = DELETE.from(entity).where(where);
+        return await cds.run(query);
+      } catch (error) {
+        console.error("Error encountered in deleting data:", error);
+        throw error;
+      }
+    },
+  };
+};
