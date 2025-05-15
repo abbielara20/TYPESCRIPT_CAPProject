@@ -8,6 +8,7 @@ modules:
     path: gen/srv
     requires:
       - name: inventoryApp-db
+      - name: inventoryApp-xsuaa
     provides:
       - name: srv-api
         properties:
@@ -22,6 +23,7 @@ modules:
     path: gen/db
     requires:
       - name: inventoryApp-db
+      - name: inventoryApp-xsuaa
     parameters:
       buildpack: nodejs_buildpack
   - name: inventoryApp-app-content
@@ -55,6 +57,8 @@ resources:
     parameters:
       service: hana
       service-plan: hdi-shared
+  - name: inventoryApp-xsuaa
+    type: org.cloudfoundry.existing-service
   - name: inventoryApp-repo-host
     type: org.cloudfoundry.managed-service
     parameters:

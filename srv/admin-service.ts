@@ -10,10 +10,10 @@ export class CatalogService extends cds.ApplicationService {
 
         this.on('fnCrud', async req => {
             const { action } = req.data;
-            let entity = "";
-            let entries: object[] = [];
-            let where = {};
-            let result = "";
+            let entity: string;
+            let entries: object[];
+            let where: object;
+            let result: object = {};
 
             switch (action) {
                 case "create":
@@ -55,15 +55,14 @@ export class CatalogService extends cds.ApplicationService {
                     result = await crudHelper.fnDelete(entity, where);
                     break;
             }
-
             console.log(result)
         })
 
-        this.on('READ', Books, async req => {
+        this.on('READ', Books, async () => {
             const where = {
                 lastName: "Lara"
             };
-            let query = SELECT
+            const query = SELECT
                 .from(Books)
                 .where(where);
             const result = await cds.run(query);

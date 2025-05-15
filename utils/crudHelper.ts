@@ -9,8 +9,10 @@ export default class CrudHelper {
  */
   async fnCreate(entity: string, entries: object[]) {
     try {
+      const tx = cds.tx();
       const query = INSERT.into(entity).entries(entries);
-      return await cds.run(query);
+      const result = await tx.run(query).then(tx.commit, tx.rollback)
+      return { result: result };
     } catch (error) {
       console.error("Error encountered in inserting data:", error);
       throw error;
@@ -24,10 +26,12 @@ export default class CrudHelper {
    * @param {array} entries - record of columns and values
    * @returns result of the query / error encountered
    */
-  async fnUpsert(entity: string, entries: object[]) {
+  async fnUpsert(entity: string, entries: object[]): Promise<object> {
     try {
+      const tx = cds.tx();
       const query = UPSERT.into(entity).entries(entries);
-      return await cds.run(query);
+      const result = await tx.run(query).then(tx.commit, tx.rollback)
+      return { result: result };
     } catch (error) {
       console.error(
         "Error encountered in updating or inserting data:",
@@ -54,7 +58,7 @@ export default class CrudHelper {
     having: string[] = [],
     groupBy: string[] = [],
     orderBy: string[] = []
-  ) {
+  ): Promise<object> {
     try {
       const query = SELECT
         .from(entity)
@@ -63,7 +67,8 @@ export default class CrudHelper {
         .having(having)
         .groupBy(...groupBy)
         .orderBy(...orderBy)
-      return await cds.run(query);
+      const result = await cds.run(query);
+      return { result: result };
     } catch (error) {
       console.error("Error encountered in reading data:", error);
       throw error;
@@ -77,10 +82,12 @@ export default class CrudHelper {
    * @param {array} entries - record of columns and values
    * @returns result of the query / error encountered
    */
-  async fnUpdate(entity: string, where: object, entries: object[]) {
+  async fnUpdate(entity: string, where: object, entries: object[]): Promise<object> {
     try {
+      const tx = cds.tx();
       const query = UPDATE(entity).set(entries[0]).where(where);
-      return await cds.run(query);
+      const result = await tx.run(query).then(tx.commit, tx.rollback)
+      return { result: result };
     } catch (error) {
       console.error("Error encountered in updating data:", error);
       throw error;
@@ -93,10 +100,12 @@ export default class CrudHelper {
    * @param {object} where - condition in which record to be deleted
    * @returns result of the query / error encountered
    */
-  async fnDelete(entity: string, where: object) {
+  async fnDelete(entity: string, where: object): Promise<object> {
     try {
+      const tx = cds.tx();
       const query = DELETE.from(entity).where(where);
-      return await cds.run(query);
+      const result = await tx.run(query).then(tx.commit, tx.rollback)
+      return { result: result };
     } catch (error) {
       console.error("Error encountered in deleting data:", error);
       throw error;
