@@ -20,28 +20,6 @@ export default class CrudHelper {
   }
 
   /**
-   * Insert records in bulk if values of the key field/s does not exists.
-   * Otherwise, update records in bulk.
-   * @param {string} entity - table name
-   * @param {array} entries - record of columns and values
-   * @returns result of the query / error encountered
-   */
-  async fnUpsert(entity: string, entries: object[]): Promise<object> {
-    try {
-      const tx = cds.tx();
-      const query = UPSERT.into(entity).entries(entries);
-      const result = await tx.run(query).then(tx.commit, tx.rollback)
-      return { result: result };
-    } catch (error) {
-      console.error(
-        "Error encountered in updating or inserting data:",
-        error
-      );
-      throw error;
-    }
-  }
-
-  /**
    * Read records with or without conditions
    * @param {object} entity - table name
    * @param {array} columns - columns to be retrieved
@@ -58,7 +36,7 @@ export default class CrudHelper {
     having: string[] = [],
     groupBy: string[] = [],
     orderBy: string[] = []
-  ): Promise<object> {
+  ) {
     try {
       const query = SELECT
         .from(entity)
@@ -82,7 +60,7 @@ export default class CrudHelper {
    * @param {array} entries - record of columns and values
    * @returns result of the query / error encountered
    */
-  async fnUpdate(entity: string, where: object, entries: object[]): Promise<object> {
+  async fnUpdate(entity: string, where: object, entries: object[]) {
     try {
       const tx = cds.tx();
       const query = UPDATE(entity).set(entries[0]).where(where);
@@ -95,12 +73,34 @@ export default class CrudHelper {
   }
 
   /**
+   * Insert records in bulk if values of the key field/s does not exists.
+   * Otherwise, update records in bulk.
+   * @param {string} entity - table name
+   * @param {array} entries - record of columns and values
+   * @returns result of the query / error encountered
+   */
+  async fnUpsert(entity: string, entries: object[]) {
+    try {
+      const tx = cds.tx();
+      const query = UPSERT.into(entity).entries(entries);
+      const result = await tx.run(query).then(tx.commit, tx.rollback)
+      return { result: result };
+    } catch (error) {
+      console.error(
+        "Error encountered in updating or inserting data:",
+        error
+      );
+      throw error;
+    }
+  }
+
+  /**
    * Delete records based on the condition
    * @param {string} entity - table name
    * @param {object} where - condition in which record to be deleted
    * @returns result of the query / error encountered
    */
-  async fnDelete(entity: string, where: object): Promise<object> {
+  async fnDelete(entity: string, where: object) {
     try {
       const tx = cds.tx();
       const query = DELETE.from(entity).where(where);
