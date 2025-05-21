@@ -1,6 +1,6 @@
 import cds from '@sap/cds'
 
-export default class CrudHelper {
+export default class CrudHelperClass {
   /**
  * Insert records in bulk
  * @param {string} entity - table name

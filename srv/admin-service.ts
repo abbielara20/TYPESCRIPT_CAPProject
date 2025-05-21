@@ -1,12 +1,15 @@
 import cds from '@sap/cds'
 import CrudHelper from '../utils/crudHelper'
 import { Books } from '#cds-models/my/bookshop'
+import TextBundle from '../utils/textBundle'
 
 export class CatalogService extends cds.ApplicationService {
     init() {
 
         const { uuid } = cds.utils;
         const crudHelper = new CrudHelper();
+        const { fnGetTextBundle } = new TextBundle();
+        const bundle = fnGetTextBundle("en");
 
         this.on('fnCrud', async req => {
             const { action } = req.data;
@@ -55,7 +58,10 @@ export class CatalogService extends cds.ApplicationService {
                     result = await crudHelper.fnDelete(entity, where);
                     break;
             }
-            console.log(result)
+            const msg = bundle.getText("SUCCESS_MESSAGE", [
+                JSON.stringify(result)
+            ]);
+            return msg;
         })
 
         this.on('READ', Books, async () => {
@@ -66,7 +72,7 @@ export class CatalogService extends cds.ApplicationService {
                 .from(Books)
                 .where(where);
             const result = await cds.run(query);
-            console.log(result);
+            return result;
         })
 
 
